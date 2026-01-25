@@ -1,0 +1,32 @@
+# general file types
+*.bak
+*.bin
+*.crl
+*.diff
+*.env
+*.kate-swp
+*.log
+*.old
+*.orig
+*.pem
+*.rej
+*.swp
+*~
+
+# bitbake build folder
+build/*/*
+!build/*/conf
+build/*/conf/*
+!build/*/conf/bblayers.conf
+!build/*/conf/site.conf
+!build/*/conf/templateconf.cfg
+__pycache__/
+*.py[cod]
+dump-e.txt
+task-depends.dot
+pn-buildlist
+/pidfile_*
+
+# VSCode
+.vscode/
+*.code-workspace
