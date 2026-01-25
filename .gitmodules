@@ -1,0 +1,3 @@
+[submodule "layers/openembedded-core"]
+	path = layers/openembedded-core
+	url = https://git.openembedded.org/openembedded-core
