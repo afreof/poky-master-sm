@@ -1,0 +1,42 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+LAYERS_DIR=$(realpath "$SCRIPT_DIR/../layers")
+
+for layer in "$LAYERS_DIR"/*; do
+    if [ -e "$layer/.git" ]; then
+        layer_name=$(basename "$layer")
+        echo "Processing $layer_name"
+        
+        contrib_url=""
+        case "$layer_name" in
+            "bitbake")
+                contrib_url="ssh://git@push.openembedded.org/bitbake-contrib"
+                ;;
+            "openembedded-core")
+                contrib_url="ssh://git@push.openembedded.org/openembedded-core-contrib"
+                ;;
+            "meta-yocto")
+                contrib_url="ssh://git@push.openembedded.org/meta-yocto-contrib"
+                ;;
+            *)
+                echo "No contrib repository configured for $layer_name"
+                continue
+                ;;
+        esac
+
+        (
+            if cd "$layer"; then
+                if ! git remote | grep -q 'contrib'; then
+                    echo "Adding contrib remote to $layer_name"
+                    git remote add contrib "$contrib_url"
+                    git fetch --prune contrib
+                else
+                    echo "Contrib remote already exists in $layer_name"
+                fi
+            fi
+        )
+    fi
+done
+
+echo "Done."
