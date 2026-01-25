@@ -4,3 +4,6 @@
 [submodule "layers/bitbake"]
 	path = layers/bitbake
 	url = https://git.openembedded.org/bitbake
+[submodule "layers/meta-yocto"]
+	path = layers/meta-yocto
+	url = https://git.yoctoproject.org/meta-yocto
