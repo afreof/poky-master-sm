@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# OE Build Environment Setup Script
+#
+# Copyright (C) 2006-2011 Linux Foundation
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+
+#
+# Normally this is called as '. ./oe-init-build-env <builddir>'
+#
+# This works in most shells (not dash), but not all of them pass the arguments
+# when being sourced.  To workaround the shell limitation use "set <builddir>"
+# prior to sourcing this script.
+#
+
+# If no builddir is specified, default to build/poky-master
+if [ $# -eq 0 ]; then
+    set -- build/poky-master
+fi
+
+if [ -n "$BASH_SOURCE" ]; then
+    THIS_SCRIPT=$BASH_SOURCE
+elif [ -n "$ZSH_NAME" ]; then
+    THIS_SCRIPT=$0
+else
+    THIS_SCRIPT="$(pwd)/oe-init-build-env"
+    if [ ! -e "$THIS_SCRIPT" ]; then
+        echo "Error: $THIS_SCRIPT doesn't exist!" >&2
+        echo "Please run this script in oe-init-build-env's directory." >&2
+        exit 1
+    fi
+fi
+if [ -n "$BBSERVER" ]; then
+    unset BBSERVER
+fi
+
+if [ -z "$ZSH_NAME" ] && [ "$0" = "$THIS_SCRIPT" ]; then
+    echo "Error: This script needs to be sourced. Please run as '. $THIS_SCRIPT'" >&2
+    exit 1
+fi
+
+if [ -z "$OEROOT" ]; then
+    OEROOT=$(dirname "$THIS_SCRIPT")/layers/openembedded-core
+    OEROOT=$(readlink -f "$OEROOT")
+fi
+
+export OEROOT
+. "$OEROOT"/scripts/oe-buildenv-internal &&
+    TEMPLATECONF="$(cat "$BUILDDIR"/conf/templateconf.cfg)" "$OEROOT"/scripts/oe-setup-builddir || {
+    unset OEROOT
+    return 1
+}
+unset OEROOT
+
+# Generate a default toolcfg.conf file
+if [ ! -e "$BUILDDIR/conf/toolcfg.conf" ]; then
+    bitbake-config-build enable-fragment core/yocto/sstate-mirror-cdn
+fi
+
+# Generate an initial configuration for VSCode and the yocto-bitbake plugin.
+OEINIT=$(dirname "$THIS_SCRIPT")
+OEINIT=$(readlink -f "$OEINIT")
+if command -v code > /dev/null; then
+    "$OEINIT"/scripts/oe-setup-vscode "$OEINIT" "$BUILDDIR" "$OEINIT"/build/*
+fi
+
+# Add the scripts directory to the PATH
+PATH="$OEINIT/scripts:$PATH"
+export PATH
+
+unset OEINIT
+unset THIS_SCRIPT
+
+# explicitly set relative umask to deal with mLinux security hardening
+umask u+rwx,g+rx,o+rx
