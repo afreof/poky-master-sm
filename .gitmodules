@@ -1,3 +1,6 @@
 [submodule "layers/openembedded-core"]
 	path = layers/openembedded-core
 	url = https://git.openembedded.org/openembedded-core
+[submodule "layers/bitbake"]
+	path = layers/bitbake
+	url = https://git.openembedded.org/bitbake
