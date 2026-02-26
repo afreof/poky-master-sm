@@ -7,7 +7,7 @@ for layer in "$LAYERS_DIR"/*; do
     if [ -e "$layer/.git" ]; then
         layer_name=$(basename "$layer")
         echo "Processing $layer_name"
-        
+
         contrib_url=""
         case "$layer_name" in
             "bitbake")
@@ -18,6 +18,9 @@ for layer in "$LAYERS_DIR"/*; do
                 ;;
             "meta-yocto")
                 contrib_url="ssh://git@push.openembedded.org/meta-yocto-contrib"
+                ;;
+            "meta-openembedded")
+                contrib_url="ssh://git@push.openembedded.org/meta-openembedded-contrib"
                 ;;
             *)
                 echo "No contrib repository configured for $layer_name"
