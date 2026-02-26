@@ -7,3 +7,6 @@
 [submodule "layers/meta-yocto"]
 	path = layers/meta-yocto
 	url = https://git.yoctoproject.org/meta-yocto
+[submodule "layers/meta-openembedded"]
+	path = layers/meta-openembedded
+	url = https://git.openembedded.org/meta-openembedded/
